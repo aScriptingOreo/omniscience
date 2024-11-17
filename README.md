@@ -22,7 +22,5 @@ services:
     container_name: omniscience-bot
     env_file:
       - .env
-    ports:
-      - "3000:3000"
     restart: unless-stopped
 ```

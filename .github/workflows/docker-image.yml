@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/ascriptingoreo/omniscience:latest
 
       - name: Log out from GitHub Container Registry
         run: docker logout ghcr.io
