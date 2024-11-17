@@ -4,8 +4,8 @@ FROM node:20
 # Create and set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+# Copy package.json
+COPY package.json ./
 
 # Install dependencies using bun
 RUN npm install -g bun
