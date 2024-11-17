@@ -27,7 +27,8 @@ db.serialize(() => {
         password TEXT NOT NULL,
         webhook_url TEXT NOT NULL,
         creator_id TEXT NOT NULL,
-        timestamp TEXT NOT NULL
+        timestamp TEXT NOT NULL,
+        guildname TEXT NOT NULL
     )`, (err) => {
         if (err) {
             console.error('Error creating table:', err.message);

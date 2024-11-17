@@ -93,7 +93,7 @@ client.on('messageCreate', async message => {
         }
 
         if (rows.length > 0) {
-            const { password } = rows[0];
+            const { password, guildname } = rows[0];
 
             db.all(`SELECT * FROM registrations WHERE password = ? AND channel_id != ?`, [password, message.channel.id], async (err, rows) => {
                 if (err) {
@@ -104,7 +104,7 @@ client.on('messageCreate', async message => {
                 const sendMessages = rows.map(async (row) => {
                     const webhookClient = new WebhookClient({ url: row.webhook_url });
                     const content = message.content;
-                    const username = `[${message.guild.name}] ${message.member.nickname || message.author.username}`;
+                    const username = `[${guildname}] ${message.member.nickname || message.author.username}`;
                     const avatarURL = message.author.displayAvatarURL();
 
                     const embeds = message.embeds.map(embed => embed.toJSON());
