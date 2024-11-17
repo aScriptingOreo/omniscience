@@ -1,0 +1,23 @@
+{
+  "name": "omniscience",
+  "module": "index.ts",
+  "type": "commonjs",
+  "version": "1.0.0",
+  "description": "A Discord bot for the Omniscience server.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "sqlite3": "^5.1.7"
+  }
+}

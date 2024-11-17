@@ -1,0 +1,391 @@
+# Using the embed constructor
+
+discord.js features the EmbedBuilder
+
+utility class for easy construction and manipulation of embeds.
+
+// at the top of your file
+const { EmbedBuilder } = require('discord.js');
+
+// inside a command, event listener, etc.
+const exampleEmbed = new EmbedBuilder()
+	.setColor(0x0099FF)
+	.setTitle('Some title')
+	.setURL('https://discord.js.org/')
+	.setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
+	.setDescription('Some description here')
+	.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+	.addFields(
+		{ name: 'Regular field title', value: 'Some value here' },
+		{ name: '\u200B', value: '\u200B' },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+	)
+	.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+	.setImage('https://i.imgur.com/AfFp7pu.png')
+	.setTimestamp()
+	.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+channel.send({ embeds: [exampleEmbed] });
+
+TIP
+
+You don't need to include all the elements showcased above. If you want a simpler embed, leave some out.
+
+The .setColor() method accepts a ColorResolvable
+
+, e.g. an integer, HEX color string, an array of RGB values or specific color strings.
+
+To add a blank field to the embed, you can use .addFields({ name: '\u200b', value: '\u200b' }).
+
+The above example chains the manipulating methods to the newly created EmbedBuilder object. If you want to modify the embed based on conditions, you will need to reference it as the constant exampleEmbed (for our example).
+
+const exampleEmbed = new EmbedBuilder().setTitle('Some title');
+
+if (message.author.bot) {
+	exampleEmbed.setColor(0x7289DA);
+}
+
+#
+Using an embed object
+
+const exampleEmbed = {
+	color: 0x0099ff,
+	title: 'Some title',
+	url: 'https://discord.js.org',
+	author: {
+		name: 'Some name',
+		icon_url: 'https://i.imgur.com/AfFp7pu.png',
+		url: 'https://discord.js.org',
+	},
+	description: 'Some description here',
+	thumbnail: {
+		url: 'https://i.imgur.com/AfFp7pu.png',
+	},
+	fields: [
+		{
+			name: 'Regular field title',
+			value: 'Some value here',
+		},
+		{
+			name: '\u200b',
+			value: '\u200b',
+			inline: false,
+		},
+		{
+			name: 'Inline field title',
+			value: 'Some value here',
+			inline: true,
+		},
+		{
+			name: 'Inline field title',
+			value: 'Some value here',
+			inline: true,
+		},
+		{
+			name: 'Inline field title',
+			value: 'Some value here',
+			inline: true,
+		},
+	],
+	image: {
+		url: 'https://i.imgur.com/AfFp7pu.png',
+	},
+	timestamp: new Date().toISOString(),
+	footer: {
+		text: 'Some footer text here',
+		icon_url: 'https://i.imgur.com/AfFp7pu.png',
+	},
+};
+
+channel.send({ embeds: [exampleEmbed] });
+
+TIP
+
+You don't need to include all the elements showcased above. If you want a simpler embed, leave some out.
+
+If you want to modify the embed object based on conditions, you will need to reference it directly (as exampleEmbed for our example). You can then (re)assign the property values as you would with any other object.
+
+const exampleEmbed = { title: 'Some title' };
+
+if (message.author.bot) {
+	exampleEmbed.color = 0x7289da;
+}
+
+#
+Attaching images
+
+You can upload images with your embedded message and use them as source for embed fields that support image URLs by constructing a AttachmentBuilder
+
+from them to send as message option alongside the embed. The attachment parameter takes a BufferResolvable or Stream including the URL to an external image.
+
+You can then reference and use the images inside the embed itself with attachment://fileName.extension.
+
+TIP
+
+If you plan to attach the same image repeatedly, consider hosting it online and providing the URL in the respective embed field instead. This also makes your bot respond faster since it doesn't need to upload the image with every response depending on it.
+#
+Using the EmbedBuilder
+
+const { AttachmentBuilder, EmbedBuilder } = require('discord.js');
+// ...
+const file = new AttachmentBuilder('../assets/discordjs.png');
+const exampleEmbed = new EmbedBuilder()
+	.setTitle('Some title')
+	.setImage('attachment://discordjs.png');
+
+channel.send({ embeds: [exampleEmbed], files: [file] });
+
+#
+Using an embed object
+
+const { AttachmentBuilder } = require('discord.js');
+// ...
+const file = new AttachmentBuilder('../assets/discordjs.png');
+
+const exampleEmbed = {
+	title: 'Some title',
+	image: {
+		url: 'attachment://discordjs.png',
+	},
+};
+
+channel.send({ embeds: [exampleEmbed], files: [file] });
+
+WARNING
+
+If the images don't display inside the embed but outside of it, double-check your syntax to make sure it's as shown above.
+#
+Resending and editing
+
+We will now explain how to edit embedded message content and resend a received embed.
+#
+Resending a received embed
+
+To forward a received embed you retrieve it from the messages embed array (message.embeds) and pass it to the EmbedBuilder, then it can be edited before sending it again.
+
+WARNING
+
+We create a new Embed from EmbedBuilder here since embeds are immutable and their values cannot be changed directly.
+
+const receivedEmbed = message.embeds[0];
+const exampleEmbed = EmbedBuilder.from(receivedEmbed).setTitle('New title');
+
+channel.send({ embeds: [exampleEmbed] });
+
+#
+Editing the embedded message content
+
+To edit the content of an embed you need to pass a new EmbedBuilder structure or embed object to the messages .edit() method.
+
+const exampleEmbed = new EmbedBuilder()
+	.setTitle('Some title')
+	.setDescription('Description after the edit');
+
+message.edit({ embeds: [exampleEmbed] });
+
+If you want to build the new embed data on a previously sent embed template, make sure to read the caveats in the previous section.
+#
+Notes
+
+    To display fields side-by-side, you need at least two consecutive fields set to inline
+    The timestamp will automatically adjust the timezone depending on the user's device
+    Mentions of any kind in embeds will only render correctly within embed descriptions and field values
+    Mentions in embeds will not trigger a notification
+    Embeds allow masked links (e.g. [Guide](https://discordjs.guide/ 'optional hovertext')), but only in description and field values
+
+#
+Embed limits
+
+There are a few limits to be aware of while planning your embeds due to the API's limitations. Here is a quick reference you can come back to:
+
+    Embed titles are limited to 256 characters
+    Embed descriptions are limited to 4096 characters
+    There can be up to 25 fields
+    A field's name is limited to 256 characters and its value to 1024 characters
+    The footer text is limited to 2048 characters
+    The author name is limited to 256 characters
+    The sum of all characters from all embed structures in a message must not exceed 6000 characters
+    10 embeds can be sent per message
+
+
+
+
+# Action rows
+
+With the components API, you can create interactive message components to enhance the functionality of your slash commands. To get started with this, the first component type you'll need to understand is the action row. To send any type of component, it must be placed in an action row.
+
+Action rows are a fairly simple form of layout component. A message may contain up to five rows, each of which has a "width" of five units. This can be thought of as a flexible 5x5 grid. A button will consume one unit of width in a row, while a select menu will consume the whole five units of width. At this time, these are the only types of components that can be sent in a message.
+
+WARNING
+
+The "width units" referred to are not fixed - the actual width of each individual button will be dynamic based on its label contents.
+#
+Building action rows
+
+To create an action row, use the ActionRowBuilder
+class and the ActionRowBuilder#addComponents()
+
+method to add buttons or a select menu.
+
+const row = new ActionRowBuilder()
+	.addComponents(component);
+
+WARNING
+
+If you're using TypeScript, you'll need to specify the type of components your action row holds. This can be done by specifying the component builder you will add to it using a generic parameter in ActionRowBuilder
+
+.
+
+- new ActionRowBuilder()
++ new ActionRowBuilder<ButtonBuilder>()
+
+#
+Sending action rows
+
+Once one or many components are inside your row(s), send them in the components property of your InteractionReplyOptions
+(extends BaseMessageOptions
+
+).
+
+const row = new ActionRowBuilder()
+	.addComponents(component);
+
+await interaction.reply({ components: [row] });
+
+To learn how to create the buttons and select menus that will go inside your row, including more detailed examples on how you might use them, continue on to the other pages in this section.
+
+Buttons
+
+The first type of interactive component we'll cover creating is a Button. Buttons are available in a variety of styles and can be used to provide permanent interfaces, temporary confirmation workflows, and other forms of additional interaction with your bot.
+
+TIP
+
+This page is a follow-up to the slash commands section and action rows page. Please carefully read those pages first so that you can understand the methods used here.
+#
+Building buttons
+
+Buttons are one of the MessageComponent classes, which can be sent via messages or interaction responses.
+
+For this example, you're going to expand on the ban command that was previously covered on the parsing options page with a confirmation workflow.
+
+To create your buttons, use the ButtonBuilder
+
+class, defining at least the customId, style and label.
+
+const { ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
+
+module.exports = {
+	// data: new SlashCommandBuilder()...
+	async execute(interaction) {
+		const target = interaction.options.getUser('target');
+		const reason = interaction.options.getString('reason') ?? 'No reason provided';
+
+		const confirm = new ButtonBuilder()
+			.setCustomId('confirm')
+			.setLabel('Confirm Ban')
+			.setStyle(ButtonStyle.Danger);
+
+		const cancel = new ButtonBuilder()
+			.setCustomId('cancel')
+			.setLabel('Cancel')
+			.setStyle(ButtonStyle.Secondary);
+	},
+};
+
+TIP
+
+The custom id is a developer-defined string of up to 100 characters. Use this field to ensure you can uniquely define all incoming interactions from your buttons!
+#
+Sending buttons
+
+To send your buttons, create an action row and add the buttons as components. Then, send the row in the components property of InteractionReplyOptions
+(extends BaseMessageOptions
+
+).
+
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
+
+module.exports = {
+	// data: new SlashCommandBuilder()...
+	async execute(interaction) {
+		const target = interaction.options.getUser('target');
+		const reason = interaction.options.getString('reason') ?? 'No reason provided';
+
+		const confirm = new ButtonBuilder()
+			.setCustomId('confirm')
+			.setLabel('Confirm Ban')
+			.setStyle(ButtonStyle.Danger);
+
+		const cancel = new ButtonBuilder()
+			.setCustomId('cancel')
+			.setLabel('Cancel')
+			.setStyle(ButtonStyle.Secondary);
+
+		const row = new ActionRowBuilder()
+			.addComponents(cancel, confirm);
+
+		await interaction.reply({
+			content: `Are you sure you want to ban ${target} for reason: ${reason}?`,
+			components: [row],
+		});
+	},
+};
+
+Restart your bot and then send the command to a channel your bot has access to. If all goes well, you should see something like this:
+User used /ban
+Guide Bot Bot 10/30/2024
+Are you sure you want to ban @User for reason: trolling?
+#
+Button styles
+
+You'll notice in the above example that two different styles of buttons have been used, the grey Secondary style and the red Danger style. These were chosen specifically to support good UI/UX principles. In total, there are five button styles that can be used as appropriate to the action of the button:
+User used /buttons
+Guide Bot Bot 10/30/2024
+Link
+
+    Primary style buttons are blue. These are suitable for most general purpose actions, where it's the primary or most significant action expected.
+    Secondary style buttons are grey. Use these for less important actions like the "Cancel" button in the example above.
+    Success style buttons are green. Similar to the Primary button, these are a good choice for "positive" confirmation actions.
+    Danger style buttons are red. Where the action being confirmed is "destructive", such a ban or delete, using a red button helps alert the user to the risk of the action.
+    Link style buttons are also grey, but are tagged with the "external link" symbol. These buttons will open the provided link in the browser without sending an interaction to the bot.
+
+#
+Link buttons
+
+Link buttons are a little different to the other styles. Link buttons must have a url, cannot have a customId and do not send an interaction event when clicked.
+
+const button = new ButtonBuilder()
+	.setLabel('discord.js docs')
+	.setURL('https://discord.js.org')
+	.setStyle(ButtonStyle.Link);
+
+#
+Disabled buttons
+
+If you want to prevent a button from being used, but not remove it from the message, you can disable it with the ButtonBuilder#setDisabled()
+
+method:
+
+const button = new ButtonBuilder()
+	.setCustomId('disabled')
+	.setLabel('Click me?')
+	.setStyle(ButtonStyle.Primary)
+	.setDisabled(true);
+
+User used /button
+Guide Bot Bot 10/30/2024
+Are you even able to
+#
+Emoji buttons
+
+If you want to use a guild emoji within a ButtonBuilder
+, you can use the ButtonBuilder#setEmoji()
+
+method:
+
+const button = new ButtonBuilder()
+	.setCustomId('primary')
+	.setLabel('Primary')
+	.setStyle(ButtonStyle.Primary)
+	.setEmoji('123456789012345678');
