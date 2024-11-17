@@ -1,3 +1,4 @@
+# docker-image.yml
 name: Build and Push Docker Image
 
 on:
@@ -32,11 +33,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/ascriptingoreo/omniscience:latest
-
-      - name: Publish Docker image as a package
-        run: |
-          echo "Publishing Docker image as a package..."
-          ghcr.io/ascriptingoreo/omniscience:latest
 
       - name: Log out from GitHub Container Registry
         run: docker logout ghcr.io
