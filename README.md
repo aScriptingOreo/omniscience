@@ -9,17 +9,20 @@ Omniscience is a Discord bot built using Node.js, `discord.js`, `sqlite3`, and `
 - **Message Bridging**: Bridge messages between channels that share the same password.
 - **Admin Commands**: Only users with admin permissions can execute commands.
 
-## Prerequisites
+## Using Docker
 
-- Node.js (v16 or higher)
-- npm or yarn
-- SQLite3
+You can use Docker to run the bot. Here is an example `docker-compose.yml` file:
 
-## Installation
+```yaml
+version: '3.8'
 
-1. Clone the repository:
-
-```sh
-git clone https://github.com/aScriptingOreo/omniscience.git
-cd omniscience
-npm install
+services:
+  omniscience-bot:
+    build: .
+    container_name: omniscience-bot
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+```
